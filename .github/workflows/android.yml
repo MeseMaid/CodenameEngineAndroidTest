@@ -7,7 +7,7 @@ on:
 env:
   HAXE_VERSION: 4.3.7
   HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
-  NDK_VERSION: 21.4.7075529 # guess, change if the build complains
+  NDK_VERSION: 21.4.7075529  
 
 jobs:
   build:
@@ -29,6 +29,8 @@ jobs:
           java-version: 17
       - name: Setting up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
       - name: Installing SDK platform, build-tools and NDK
         run: |
           sdkmanager "platforms;android-35" "build-tools;35.0.0" "ndk;${{ env.NDK_VERSION }}"
