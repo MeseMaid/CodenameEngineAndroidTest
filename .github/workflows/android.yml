@@ -47,18 +47,20 @@ jobs:
         run: |
           haxelib --global update haxelib
           haxe -cp commandline -D analyzer-optimize --run Main setup -si
-      - name: Configuring Lime
+      - name: Rebuilding Lime
+        run: |
+          haxelib run lime rebuild hxcpp
+          haxelib run lime rebuild tools
+          haxelib run lime rebuild linux -nocolor -release
+      - name: Configuring Lime for Android
         run: |
           haxelib run lime setup -alias -y -nocffi
           haxelib run lime config ANDROID_SDK "$ANDROID_HOME"
           haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}"
           haxelib run lime config JAVA_HOME "$JAVA_HOME"
           haxelib run lime config ANDROID_SETUP true
-      - name: Rebuilding Lime
+      - name: Rebuilding Lime for Android
         run: |
-          haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild tools
-          haxelib run lime rebuild linux -nocolor -release
           haxelib run lime rebuild android -nocolor -release
       - name: Building the game
         run: |
