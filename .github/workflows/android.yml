@@ -71,6 +71,20 @@ jobs:
       - name: Rebuilding Lime for Android
         run: |
           haxelib run lime rebuild android -nocolor -release
+      - name: Patching OpenFL
+        run: |
+          f=.haxelib/openfl/git/src/openfl/display3D/Context3D.hx
+          sed -i 's/var bgraExtension:Dynamic = bgraExtension = /var bgraExtension:Dynamic = /' $f
+          python3 - << 'EOF'
+          import re
+          p = ".haxelib/openfl/git/src/openfl/display/Shader.hx"
+          s = open(p).read()
+          if "__lastProgramError" not in s:
+              s = re.sub(r"(class Shader\b[^{]*\{)", r'\1\n\t@:noCompletion private static var __lastProgramError:String = "";', s, count=1)
+              open(p, "w").write(s)
+          EOF
+          grep -n "__lastProgramError" .haxelib/openfl/git/src/openfl/display/Shader.hx || true
+          grep -n "bgraExtension" $f | head
       - name: Building the game
         run: |
           haxelib run lime build android -DCOMPILE_EXPERIMENTAL
