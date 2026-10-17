@@ -12,6 +12,7 @@ env:
 jobs:
   build:
     name: Android Build
+    timeout-minutes: 120
     runs-on: ubuntu-24.04
     steps:
       - name: Pulling the new commit
@@ -59,6 +60,9 @@ jobs:
           haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}"
           haxelib run lime config JAVA_HOME "$JAVA_HOME"
           haxelib run lime config ANDROID_SETUP true
+      - name: Patching Lime for GLES
+        run: |
+          find .haxelib/lime/git/project -name OpenGLBindings.cpp -exec sed -i 's/glClearDepth (/glClearDepthf (/g' {} +
       - name: Rebuilding Lime for Android
         run: |
           haxelib run lime rebuild android -nocolor -release
