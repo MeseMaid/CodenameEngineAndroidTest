@@ -63,6 +63,11 @@ jobs:
       - name: Patching Lime for GLES
         run: |
           find .haxelib/lime/git/project -name OpenGLBindings.cpp -exec sed -i 's/glClearDepth (/glClearDepthf (/g' {} +
+      - name: Patching Lime to link GLES3
+        run: |
+          grep -rn "GLESv2" .haxelib/lime/git/project --include=*.xml || true
+          find .haxelib/lime/git/project -name '*.xml' -exec sed -i 's|<lib name="-lGLESv2"|<lib name="-lGLESv3"/><lib name="-lGLESv2"|g' {} +
+          grep -rn "GLESv3" .haxelib/lime/git/project --include=*.xml || true
       - name: Rebuilding Lime for Android
         run: |
           haxelib run lime rebuild android -nocolor -release
